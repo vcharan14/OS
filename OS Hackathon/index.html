@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Scheduling Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>CPU Scheduling Simulator</h1>
+
+    <!-- Input Form for Number of Processes -->
+    <label for="processCount">Number of Processes:</label>
+    <input type="number" id="processCount" min="1" value="1" onchange="generateProcessInputs()">
+
+    <div id="processInputs"></div>
+
+    <label for="algorithm">Select Scheduling Algorithm:</label>
+    <select id="algorithm">
+        <option value="FCFS">First-Come First-Serve (FCFS)</option>
+        <option value="SJF">Shortest Job First (SJF)</option>
+        <option value="Priority">Priority Scheduling</option>
+        <option value="RoundRobin">Round Robin</option>
+        <option value="SRTF">Shortest Remaining Time First (SRTF)</option>
+    </select>
+
+    <button type="button" onclick="simulateScheduling()">Simulate</button>
+
+    <!-- Output Section -->
+    <div class="output" id="output">
+        <h3>Scheduling Results:</h3>
+        <p id="results"></p>
+
+        <!-- Gantt Chart Display -->
+        <div id="ganttChart" class="gantt-chart"></div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
