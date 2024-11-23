@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Traffic Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e0f7fa;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #00796b;
+        }
+        .intersection {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            margin: 20px auto;
+            border: 2px solid #00796b;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .light {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            position: absolute;
+            transition: background-color 0.5s ease;
+        }
+        .north { top: 10px; left: 50%; transform: translateX(-50%); }
+        .south { bottom: 10px; left: 50%; transform: translateX(-50%); }
+        .east { right: 10px; top: 50%; transform: translateY(-50%); }
+        .west { left: 10px; top: 50%; transform: translateY(-50%); }
+        .green { background-color: green; }
+        .red { background-color: red; }
+        .vehicle {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            transition: transform 0.5s linear;
+            background-image: url('https://img.icons8.com/ios-filled/50/000000/car.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        .vehicle-label {
+            position: absolute;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+        }
+        #controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .control-button {
+            margin: 5px;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #00796b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .control-button:hover {
+            background-color: #004d40;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Real-Time Traffic Simulation</h1>
+    
+    <div class="intersection">
+        <svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="300" fill="#cfd8dc"/>
+            <rect x="140" y="0" width="20" height="300" fill="#757575"/>
+            <rect x="0" y="140" width="300" height="20" fill="#757575"/>
+            <circle id="northLight" class="light north red" cx="150" cy="10" />
+            <circle id="southLight" class="light south red" cx="150" cy="290" />
+            <circle id="eastLight" class="light east red" cx="290" cy="150" />
+            <circle id="westLight" class="light west red" cx="10" cy="150" />
+            <text x="150" y="15" font-family="Arial" font-size="10" text-anchor="middle" fill="white">N</text>
+            <text x="150" y="295" font-family="Arial" font-size="10" text-anchor="middle" fill="white">S</text>
+            <text x="295" y="150" font-family="Arial" font-size="10" text-anchor="middle" fill="white">E</text>
+            <text x="5" y="150" font-family="Arial" font-size="10" text-anchor="middle" fill="white">W</text>
+        </svg>
+        <div id="vehicle1" class="vehicle" style="top: 120px; left: 100px;">
+            <div class="vehicle-label">1</div>
+        </div>
+        <div id="vehicle2" class="vehicle" style="top: 160px; left: 100px;">
+            <div class="vehicle-label">2</div>
+        </div>
+    </div>
+
+    <div id="controls">
+        <h2>Traffic Light Controls</h2>
+        <div class="control-button" onclick="toggleLight('northLight')">Toggle North Light</div>
+        <div class="control-button" onclick="toggleLight('southLight')">Toggle South Light</div>
+        <div class="control-button" onclick="toggleLight('eastLight')">Toggle East Light</div>
+        <div class="control-button" onclick="toggleLight('westLight')">Toggle West Light</div>
+        <h2>Vehicle Controls</h2>
+        <div class="control-button" onclick="moveVehicle('vehicle1', 'North')">Move Vehicle 1 North</div>
+        <div class="control-button" onclick="moveVehicle('vehicle1', 'South')">Move Vehicle 1 South</div>
+        <div class="control-button" onclick="moveVehicle('vehicle1', 'East')">Move Vehicle 1 East</div>
+        <div class="control-button" onclick="moveVehicle('vehicle1', 'West')">Move Vehicle 1 West</div>
+        <div class="control-button" onclick="moveVehicle('vehicle2', 'North')">Move Vehicle 2 North</div>
+        <div class="control-button" onclick="moveVehicle('vehicle2', 'South')">Move Vehicle 2 South</div>
+        <div class="control-button" onclick="moveVehicle('vehicle2', 'East')">Move Vehicle 2 East</div>
+        <div class="control-button" onclick="moveVehicle('vehicle2', 'West')">Move Vehicle 2 West</div>
+    </div>
+
+    <script>
+        function toggleLight(lightId) {
+            const light = document.getElementById(lightId);
+            if (light.classList.contains('red')) {
+                light.classList.remove('red');
+                light.classList.add('green');
+            } else {
+                light.classList.remove('green');
+                light.classList.add('red');
+            }
+        }
+
+        function moveVehicle(vehicleId, direction) {
+            const vehicle = document.getElementById(vehicleId);
+            let currentPosition = vehicle.style.transform.match(/-?\d+/g) || [0, 0];
+            currentPosition = { x: parseInt(currentPosition[0]), y: parseInt(currentPosition[1]) };
+
+            // Move vehicle based on the selected direction
+            switch (direction) {
+                case 'North':
+                    if (currentPosition.y > -100) currentPosition.y -= 40; // Move up
+                    break;
+                case 'South':
+                    if (currentPosition.y < 260) currentPosition.y += 40; // Move down
+                    break;
+                case 'East':
+                    if (currentPosition.x < 260) currentPosition.x += 40; // Move right
+                    break;
+                case 'West':
+                    if (currentPosition.x > -100) currentPosition.x -= 40; // Move left
+                    break;
+            }
+
+            vehicle.style.transform = `translate(${currentPosition.x}px, ${currentPosition.y}px)`;
+        }
+    </script>
+
+</body>
+</html>
